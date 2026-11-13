@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FFF4E6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Get Well Soon</title>
+<meta property="og:title" content="A care package for you">
+<meta property="og:description" content="Open it. Volume up.">
+<meta property="og:image" content="https://adoniascodes.github.io/care/img/selfie.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧻</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF4E6; --paper:#FFFDF8; --ink:#3B2A20; --soft:#8A6F5C;
+  --coral:#FF6B5E; --coral-d:#E2513F; --mint:#3FB68B; --brown:#8B5A3C; --gold:#F2B33D;
+  --line:rgba(59,42,32,.12);
+  --ease-out:cubic-bezier(.23,1,.32,1);
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+html,body{overscroll-behavior:none;background:var(--bg)}
+body{
+  font-family:Nunito,system-ui,sans-serif;color:var(--ink);
+  min-height:100dvh;overflow:hidden;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+button,a.btn{touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+img{display:block;max-width:100%;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}
+
+/* stage: one step visible at a time */
+.stage{position:relative;height:100dvh;max-width:480px;margin:0 auto}
+.step{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:64px 20px 28px;text-align:center;gap:18px;
+  opacity:0;transform:translateY(24px);pointer-events:none;
+  transition:opacity .45s var(--ease-out),transform .45s var(--ease-out);
+}
+.step.on{opacity:1;transform:none;pointer-events:auto}
+.step.off{opacity:0;transform:translateY(-24px)}
+
+h1,h2{font-family:Fredoka,sans-serif;font-weight:700;line-height:1.08;letter-spacing:-.01em}
+h1{font-size:clamp(30px,8.5vw,40px)}
+h2{font-size:clamp(26px,7.5vw,34px)}
+p.lead{font-size:17px;line-height:1.45;color:var(--soft);max-width:34ch}
+.hand{font-family:Caveat,cursive;font-size:24px;color:var(--coral-d)}
+
+.btn{
+  font:700 18px/1 Fredoka,sans-serif;border:0;border-radius:999px;cursor:pointer;
+  background:var(--coral);color:#fff;padding:17px 28px;min-width:220px;
+  box-shadow:0 4px 0 var(--coral-d),0 10px 24px rgba(226,81,63,.25);
+  transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out);
+  text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn:active{transform:translateY(3px) scale(.98);box-shadow:0 1px 0 var(--coral-d),0 4px 10px rgba(226,81,63,.2)}
+.btn.ghost{background:var(--paper);color:var(--ink);box-shadow:0 4px 0 #E8D6C2,0 8px 18px rgba(59,42,32,.08)}
+.btn.ghost:active{box-shadow:0 1px 0 #E8D6C2}
+.btn.snap{background:#FFFC00;color:#111;box-shadow:0 4px 0 #D9D400,0 10px 24px rgba(0,0,0,.12)}
+.btn.snap:active{box-shadow:0 1px 0 #D9D400}
+@media (hover:hover) and (pointer:fine){ .btn:hover{filter:brightness(1.04)} }
+.hidden{display:none!important}
+
+/* top bar */
+.dots{position:fixed;top:calc(env(safe-area-inset-top) + 18px);left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:20}
+.dots i{width:8px;height:8px;border-radius:9px;background:var(--line);transition:width .3s var(--ease-out),background .3s}
+.dots i.on{width:22px;background:var(--coral)}
+.toot{
+  position:fixed;z-index:30;right:calc(env(safe-area-inset-right) + 14px);bottom:calc(env(safe-area-inset-bottom) + 14px);
+  width:58px;height:58px;border-radius:50%;border:0;background:var(--paper);font-size:30px;cursor:pointer;
+  box-shadow:0 4px 0 #E8D6C2,0 8px 20px rgba(59,42,32,.15);transition:transform 120ms var(--ease-out);
+}
+.toot:active{transform:scale(.9)}
+.toot small{position:absolute;top:-22px;right:0;font:700 11px Nunito;color:var(--soft);white-space:nowrap}
+.mute{
+  position:fixed;z-index:30;left:calc(env(safe-area-inset-left) + 14px);bottom:calc(env(safe-area-inset-bottom) + 14px);
+  border:0;background:transparent;font:700 13px Nunito;color:var(--soft);padding:12px;cursor:pointer;
+}
+
+/* step 0: intro */
+.polaroid{
+  background:#fff;padding:10px 10px 38px;border-radius:6px;box-shadow:0 14px 30px rgba(59,42,32,.18);
+  transform:rotate(-3deg);position:relative;width:min(62vw,250px)
+}
+.polaroid img{border-radius:3px;aspect-ratio:1;object-fit:cover;width:100%}
+.polaroid .cap{position:absolute;left:0;right:0;bottom:8px;font-family:Caveat;font-size:22px;color:var(--ink)}
+.polaroid .tape{position:absolute;top:-12px;left:50%;width:84px;height:24px;margin-left:-42px;background:rgba(255,220,170,.75);transform:rotate(4deg)}
+.thermo{position:absolute;right:-18px;top:24px;font-size:44px;transform:rotate(18deg);animation:wob 2.4s ease-in-out infinite}
+@keyframes wob{50%{transform:rotate(8deg) translateY(-4px)}}
+
+/* step 1: toilet roll */
+.rollwrap{position:relative;width:240px;display:flex;flex-direction:column;align-items:center;touch-action:none;cursor:grab;flex:1;max-height:440px}
+.roll{
+  width:240px;height:74px;border-radius:38px;position:relative;z-index:2;
+  background:linear-gradient(180deg,#fff 0%,#F3EBDD 100%);
+  box-shadow:inset 0 -6px 0 #E7DCC9,0 6px 14px rgba(59,42,32,.15);
+}
+.roll::after{content:"";position:absolute;right:16px;top:50%;width:30px;height:30px;margin-top:-15px;border-radius:50%;background:#C9A57F;box-shadow:inset 0 0 0 8px #E3C9A8}
+.strip{
+  width:206px;height:0;overflow:hidden;margin-top:-14px;position:relative;z-index:1;
+  background:var(--paper);box-shadow:0 8px 18px rgba(59,42,32,.10);
+  border-radius:0 0 10px 10px;
+}
+.strip .sheets{padding-top:14px}
+.sheet{
+  height:96px;display:flex;align-items:center;justify-content:center;padding:0 16px;
+  font:600 16px/1.3 Fredoka,sans-serif;border-bottom:2px dashed #E9DFD0;
+  background-image:radial-gradient(#EFE6D7 1px,transparent 1.4px);background-size:9px 9px;
+}
+.pullhint{font:800 14px Nunito;color:var(--soft);animation:bob 1.3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(6px)}}
+
+/* step 2: report */
+.report{
+  background:var(--paper);border-radius:18px;padding:16px;width:100%;text-align:left;position:relative;
+  box-shadow:0 1px 0 var(--line),0 14px 30px rgba(59,42,32,.10);
+}
+.report .head{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.report .head img{width:84px;height:84px;object-fit:cover;border-radius:12px}
+.report .head b{font:700 17px Fredoka}
+.report .head span{display:block;font-size:13px;color:var(--soft);margin-top:3px}
+.row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line);font-size:15px}
+.row em{font-style:normal;font-weight:800;text-align:right}
+.row em.bad{color:var(--coral-d)} .row em.good{color:var(--mint)}
+.stamp{
+  position:absolute;right:10px;bottom:26px;border:4px solid var(--mint);color:var(--mint);
+  font:700 20px/1 Fredoka;padding:8px 12px;border-radius:10px;letter-spacing:.04em;background:rgba(255,253,248,.85);
+  transform:rotate(-14deg) scale(2.4);opacity:0;pointer-events:none;
+}
+.stamp.in{animation:stamp .38s var(--ease-out) forwards}
+@keyframes stamp{to{transform:rotate(-14deg) scale(1);opacity:1}}
+
+/* step 3: coupon */
+.coupon{
+  width:100%;max-width:340px;border-radius:20px;position:relative;overflow:hidden;
+  background:var(--paper);box-shadow:0 14px 30px rgba(59,42,32,.14);
+}
+.coupon .top{background:var(--coral);color:#fff;padding:12px 16px;font:700 14px Fredoka;letter-spacing:.08em;text-transform:uppercase;display:flex;justify-content:space-between}
+.coupon .body{position:relative;height:190px}
+.prize{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.prize .amt{font:700 64px/1 Fredoka;color:var(--ink)}
+.prize .amt small{font-size:28px;margin-left:4px}
+.prize .what{font-size:15px;color:var(--soft);font-weight:700}
+.prize .code{margin-top:8px;font:700 13px ui-monospace,monospace;background:#F6EEE2;padding:5px 10px;border-radius:7px;letter-spacing:.1em}
+#scratch{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair;transition:opacity .5s var(--ease-out)}
+.coupon .foot{border-top:2px dashed #EADFCF;padding:12px 16px;font-size:13px;color:var(--soft);text-align:left;line-height:1.4}
+.coupon::before,.coupon::after{content:"";position:absolute;top:calc(44px + 190px - 11px);width:22px;height:22px;border-radius:50%;background:var(--bg);z-index:3}
+.coupon::before{left:-11px}.coupon::after{right:-11px}
+.redeem{
+  background:var(--paper);border-radius:16px;padding:14px 16px;width:100%;max-width:340px;text-align:left;
+  box-shadow:0 1px 0 var(--line);font-size:15px;line-height:1.45;
+}
+.redeem b{font-family:Fredoka;font-size:16px}
+
+/* step 4: final */
+.final-photo{width:min(70vw,270px);aspect-ratio:4/5;border-radius:140px 140px 22px 22px;overflow:hidden;box-shadow:0 18px 36px rgba(59,42,32,.22)}
+.final-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 60%}
+.love{font-family:Fredoka;font-weight:600;font-size:21px;line-height:1.35;max-width:30ch}
+.sign{font-family:Caveat;font-size:34px;color:var(--coral-d);line-height:1}
+
+.floaty{position:fixed;pointer-events:none;z-index:40;font-size:30px;will-change:transform,opacity}
+
+@media (max-height:680px){
+  .step{gap:12px;padding-top:52px}
+  .polaroid{width:min(50vw,200px)}
+  .final-photo{width:min(52vw,210px)}
+  .coupon .body{height:160px}
+  .coupon::before,.coupon::after{top:calc(44px + 160px - 11px)}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<div class="dots" id="dots"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+
+<main class="stage">
+  <!-- 0 intro -->
+  <section class="step on" data-step="0">
+    <div class="polaroid">
+      <span class="tape"></span>
+      <img src="img/selfie.jpg" alt="Her, looking unfairly good">
+      <span class="cap">the patient ❤️</span>
+      <span class="thermo">🌡️</span>
+    </div>
+    <h1>Hey beautiful.<br>I heard your tummy is protesting today.</h1>
+    <p class="lead">So I made you a tiny care package. It's short, it has sounds, and it's a little bit stupid. Volume up 🔊</p>
+    <button class="btn" data-next>Open it 🎁</button>
+  </section>
+
+  <!-- 1 roll -->
+  <section class="step" data-step="1">
+    <h2>A get-well roll 🧻</h2>
+    <p class="lead" id="rollLead">Pull the paper down. Gently. You've been through enough.</p>
+    <div class="rollwrap" id="rollwrap">
+      <div class="roll"></div>
+      <div class="strip" id="strip"><div class="sheets" id="sheets"></div></div>
+      <div class="pullhint" id="pullhint">👇 pull</div>
+    </div>
+    <button class="btn hidden" id="rollNext" data-next>Next: your medical report 📋</button>
+  </section>
+
+  <!-- 2 report -->
+  <section class="step" data-step="2">
+    <h2>Official Love Inspection</h2>
+    <div class="report">
+      <div class="head">
+        <img src="img/walk.jpg" alt="Her walking down a gallery hallway">
+        <div><b>Patient spotted</b><span>walking to the bathroom. Again. Very elegantly though.</span></div>
+      </div>
+      <div class="row"><span>Tummy</span><em class="bad">in rebellion 🌪️</em></div>
+      <div class="row"><span>Bathroom visits</span><em class="bad">too many to count</em></div>
+      <div class="row"><span>Cuteness</span><em class="good">somehow unaffected</em></div>
+      <div class="row"><span>My love for you</span><em class="good">100% (checked twice)</em></div>
+      <div class="stamp" id="stamp">STILL LOVED ❤️</div>
+    </div>
+    <button class="btn" id="stampBtn">Stamp it 🔨</button>
+    <button class="btn hidden" id="reportNext" data-next>Claim your reward 🎟️</button>
+  </section>
+
+  <!-- 3 coupon -->
+  <section class="step" data-step="3">
+    <h2 id="cpTitle">Scratch your coupon</h2>
+    <div class="coupon">
+      <div class="top"><span>Get Well Coupon</span><span>No. 001</span></div>
+      <div class="body">
+        <div class="prize">
+          <div class="amt">500<small>Br</small></div>
+          <div class="what">Spend it on anything you want</div>
+          <div class="code">TUMMY-500</div>
+        </div>
+        <canvas id="scratch" aria-label="Scratch area"></canvas>
+      </div>
+      <div class="foot">Valid until you feel better. Or forever. I'm not strict.</div>
+    </div>
+    <div class="redeem hidden" id="redeem">
+      <b>How to redeem 📸</b><br>
+      Send me a pic of you on Snapchat. Any pic. Sick face is allowed. Blanket burrito is encouraged.
+    </div>
+    <a class="btn snap hidden" id="snapBtn" href="snapchat://">👻 Open Snapchat</a>
+    <button class="btn ghost hidden" id="cpNext" data-next>One more thing ❤️</button>
+  </section>
+
+  <!-- 4 final -->
+  <section class="step" data-step="4">
+    <div class="final-photo"><img src="img/night.jpg" alt="Her smiling at night in a green dress"></div>
+    <p class="love">I wish I was there to really take care of you. I will try what I can from here.</p>
+    <div class="sign">My Love, My Everything ❤️</div>
+    <button class="btn ghost" id="again">Watch again 🔁</button>
+  </section>
+</main>
+
+<button class="toot" id="toot" aria-label="Emergency toot"><small>emergency button</small>💩</button>
+<button class="mute" id="mute">🔊 sound on</button>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const steps = [...document.querySelectorAll('.step')];
+  const dots = [...document.querySelectorAll('#dots i')];
+  let cur = 0, muted = false;
+  const buzz = p => { try { navigator.vibrate && navigator.vibrate(p) } catch(e){} };
+
+  /* ---------- sound (all synthesized, nothing gross) ---------- */
+  let ac;
+  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch(e){}
+  function ctx(){
+    if (!ac) { const A = window.AudioContext || window.webkitAudioContext; if (!A) return null; ac = new A(); }
+    if (ac.state === 'suspended') ac.resume();
+    return ac;
+  }
+  // cartoon toot: buzzy low tone with a flutter, ends in a squeak
+  function toot(len){
+    const a = ctx(); if (!a || muted) return;
+    const t = a.currentTime, d = len || (0.28 + Math.random()*0.3);
+    const o = a.createOscillator(), g = a.createGain(), f = a.createBiquadFilter();
+    const lfo = a.createOscillator(), lg = a.createGain();
+    o.type = 'sawtooth';
+    const p0 = 95 + Math.random()*50;
+    o.frequency.setValueAtTime(p0, t);
+    o.frequency.exponentialRampToValueAtTime(p0*0.6, t + d*0.8);
+    o.frequency.exponentialRampToValueAtTime(p0*1.9, t + d);       // the squeak
+    lfo.type = 'square'; lfo.frequency.value = 22 + Math.random()*14;
+    lg.gain.value = 0.5; lfo.connect(lg); lg.connect(g.gain);
+    f.type = 'lowpass'; f.frequency.value = 750; f.Q.value = 6;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.5, t + 0.03);
+    g.gain.setValueAtTime(0.5, t + d*0.7);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.05);
+    o.connect(f); f.connect(g); g.connect(a.destination);
+    o.start(t); lfo.start(t); o.stop(t + d + 0.08); lfo.stop(t + d + 0.08);
+    buzz([30,20,40]);
+  }
+  function tone(freq, start, dur, type, vol){
+    const a = ctx(); if (!a || muted) return;
+    const t = a.currentTime + start, o = a.createOscillator(), g = a.createGain();
+    o.type = type || 'triangle'; o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.25, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  const pop = () => { const a = ctx(); if (!a || muted) return; const t=a.currentTime,o=a.createOscillator(),g=a.createGain();
+    o.frequency.setValueAtTime(420,t); o.frequency.exponentialRampToValueAtTime(900,t+0.08);
+    g.gain.setValueAtTime(0.2,t); g.gain.exponentialRampToValueAtTime(0.0001,t+0.1);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t+0.12); };
+  const thud = () => { tone(110,0,0.18,'sine',0.6); tone(70,0.02,0.22,'sine',0.5); buzz(60); };
+  const tada = () => { [523,659,784,1047].forEach((f,i)=>tone(f,i*0.09,0.35,'triangle',0.22)); tone(1319,0.42,0.6,'sine',0.15); };
+  const chime = () => { [784,988,1175].forEach((f,i)=>tone(f,i*0.12,0.7,'sine',0.14)); };
+
+  /* ---------- floating emoji ---------- */
+  function floaty(x, y, ch){
+    const el = document.createElement('span'); el.className = 'floaty'; el.textContent = ch;
+    el.style.left = (x-15)+'px'; el.style.top = (y-15)+'px'; document.body.appendChild(el);
+    const dx = (Math.random()-.5)*120;
+    el.animate([{transform:'translate(0,0) scale(.6)',opacity:1},{transform:`translate(${dx}px,-170px) scale(1.2) rotate(${dx}deg)`,opacity:0}],
+      {duration:1100+Math.random()*400,easing:'cubic-bezier(.23,1,.32,1)'}).onfinish = () => el.remove();
+  }
+
+  /* ---------- navigation ---------- */
+  function go(n){
+    if (n === cur || n < 0 || n >= steps.length) return;
+    steps[cur].classList.remove('on'); steps[cur].classList.add('off');
+    const old = steps[cur]; setTimeout(()=>old.classList.remove('off'), 460);
+    cur = n; steps[cur].classList.add('on');
+    dots.forEach((d,i)=>d.classList.toggle('on', i===cur));
+    if (cur === 1) setupRoll();
+    if (cur === 3) setupScratch();
+    if (cur === 4) finale();
+  }
+  document.querySelectorAll('[data-next]').forEach(b => b.addEventListener('click', () => { pop(); go(cur+1); }));
+  $('#again').addEventListener('click', () => { location.reload(); });
+
+  // first tap anywhere unlocks audio on iOS
+  addEventListener('pointerdown', () => ctx(), {once:true});
+  steps[0].querySelector('[data-next]').addEventListener('click', () => setTimeout(()=>toot(0.5), 150));
+
+  $('#mute').addEventListener('click', e => { muted = !muted; e.currentTarget.textContent = muted ? '🔇 sound off' : '🔊 sound on'; });
+
+  const tootLines = ['💩','🧻','💨','❤️','🫣'];
+  $('#toot').addEventListener('click', e => {
+    toot(); const r = e.currentTarget.getBoundingClientRect();
+    for (let i=0;i<5;i++) setTimeout(()=>floaty(r.left+29, r.top, tootLines[Math.floor(Math.random()*tootLines.length)]), i*70);
+  });
+
+  /* ---------- step 1: toilet roll ---------- */
+  const lines = [
+    "Hi. This is a get-well roll.",
+    "Your tummy has been very dramatic today.",
+    "I still love you. Zero percent less.",
+    "Okay, maybe I stand a little further away. Kidding. Mostly.",
+    "Drink water. Small sips. Doctor's orders.",
+    "Dr. Me also prescribes rice, bananas, toast, and a nap.",
+    "You're the cutest sick person in Addis. Fact."
+  ];
+  const SHEET = 96, MAXH = SHEET * lines.length + 14;
+  let rollReady = false, pulled = 0, shown = 0;
+  function setupRoll(){
+    if (rollReady) return; rollReady = true;
+    $('#sheets').innerHTML = lines.map(l => `<div class="sheet">${l}</div>`).join('');
+    const wrap = $('#rollwrap'), strip = $('#strip');
+    let startY = null, base = 0;
+    const room = () => Math.max(SHEET*2, wrap.getBoundingClientRect().height - 60);
+    function setH(h){
+      pulled = Math.max(0, Math.min(h, MAXH));
+      const vis = Math.min(pulled, room());
+      strip.style.height = vis + 'px';
+      // keep the newest sheet in view: scroll the sheets up once the strip is longer than the space
+      $('#sheets').style.transform = `translateY(${-(pulled - vis)}px)`;
+      const n = Math.floor((pulled - 14 + SHEET*0.35) / SHEET);
+      if (n > shown) { shown = n; toot(0.18 + Math.random()*0.18); }
+      if (pulled > 10) $('#pullhint').style.opacity = 0;
+      if (shown >= lines.length) { $('#rollNext').classList.remove('hidden'); $('#rollLead').textContent = 'Roll complete. You are officially cared for.'; }
+    }
+    wrap.addEventListener('pointerdown', e => { startY = e.clientY; base = pulled; wrap.setPointerCapture(e.pointerId); ctx(); });
+    wrap.addEventListener('pointermove', e => { if (startY === null) return; const dy = e.clientY - startY; if (dy > 0) setH(base + dy*1.15); });
+    const end = e => {
+      if (startY === null) return;
+      const moved = Math.abs(e.clientY - startY); startY = null;
+      if (moved < 8) { strip.style.transition = 'height .35s cubic-bezier(.23,1,.32,1)'; setH(14 + (shown+1)*SHEET); setTimeout(()=>strip.style.transition='',380); }
+    };
+    wrap.addEventListener('pointerup', end); wrap.addEventListener('pointercancel', end);
+  }
+
+  /* ---------- step 2: stamp ---------- */
+  $('#stampBtn').addEventListener('click', e => {
+    e.currentTarget.classList.add('hidden');
+    $('#stamp').classList.add('in'); setTimeout(thud, 300);
+    setTimeout(() => $('#reportNext').classList.remove('hidden'), 700);
+  });
+
+  /* ---------- step 3: scratch card ---------- */
+  let scratchReady = false, revealed = false;
+  function setupScratch(){
+    if (scratchReady) return; scratchReady = true;
+    const cv = $('#scratch'), c = cv.getContext('2d');
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    const W = cv.clientWidth, H = cv.clientHeight;
+    cv.width = W*dpr; cv.height = H*dpr; c.scale(dpr,dpr);
+    const g = c.createLinearGradient(0,0,W,H); g.addColorStop(0,'#C9B49B'); g.addColorStop(.5,'#E3D2BC'); g.addColorStop(1,'#BFA88D');
+    c.fillStyle = g; c.fillRect(0,0,W,H);
+    c.font = '700 22px Fredoka, sans-serif'; c.fillStyle = 'rgba(59,42,32,.55)'; c.textAlign = 'center';
+    c.fillText('scratch me 👆', W/2, H/2 - 4);
+    c.font = '700 13px Nunito, sans-serif'; c.fillText('(no germs, I promise)', W/2, H/2 + 20);
+    for (let i=0;i<14;i++){ c.font='18px serif'; c.globalAlpha=.25; c.fillText(['💩','❤️','🧻'][i%3], Math.random()*W, Math.random()*H); }
+    c.globalAlpha = 1; c.globalCompositeOperation = 'destination-out'; c.lineWidth = 38; c.lineCap = c.lineJoin = 'round';
+    let last = null, moves = 0;
+    const pt = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+    cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); last = pt(e); c.beginPath(); c.arc(last[0],last[1],19,0,7); c.fill(); });
+    cv.addEventListener('pointermove', e => {
+      if (!last || revealed) return; const p = pt(e);
+      c.beginPath(); c.moveTo(last[0],last[1]); c.lineTo(p[0],p[1]); c.stroke(); last = p;
+      if (++moves % 6 === 0){ tone(1800 + Math.random()*600, 0, 0.03, 'square', 0.03); check(); }
+    });
+    const up = () => { last = null; check(); };
+    cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+    function check(){
+      if (revealed) return;
+      const d = c.getImageData(0,0,cv.width,cv.height).data; let clear = 0, n = 0;
+      for (let i=3;i<d.length;i+=4*40){ n++; if (d[i] === 0) clear++; }
+      if (clear/n > 0.45) reveal();
+    }
+    function reveal(){
+      revealed = true; cv.style.opacity = 0; setTimeout(()=>cv.remove(), 520);
+      $('#cpTitle').textContent = 'You won! 🎉';
+      tada(); buzz([50,40,50,40,120]); party();
+      setTimeout(()=>{ $('#redeem').classList.remove('hidden'); $('#snapBtn').classList.remove('hidden'); $('#cpNext').classList.remove('hidden'); }, 600);
+    }
+  }
+  function party(){
+    if (typeof confetti !== 'function') { for (let i=0;i<24;i++) setTimeout(()=>floaty(Math.random()*innerWidth, innerHeight*.7, ['🎉','❤️','💩','✨'][i%4]), i*40); return; }
+    const colors = ['#FF6B5E','#F2B33D','#3FB68B','#FFFFFF','#8B5A3C'];
+    confetti({particleCount:130, spread:80, origin:{y:.6}, colors});
+    setTimeout(()=>confetti({particleCount:70, angle:60, spread:60, origin:{x:0,y:.7}, colors}), 220);
+    setTimeout(()=>confetti({particleCount:70, angle:120, spread:60, origin:{x:1,y:.7}, colors}), 360);
+    try {
+      const shapes = ['💩','❤️','🧻'].map(t => confetti.shapeFromText({text:t, scalar:2.2}));
+      setTimeout(()=>confetti({shapes, scalar:2.2, particleCount:28, spread:100, origin:{y:.55}, gravity:.9, ticks:220}), 500);
+    } catch(e){}
+  }
+
+  /* ---------- step 4: finale ---------- */
+  function finale(){
+    chime();
+    let i = 0; const iv = setInterval(() => {
+      floaty(30 + Math.random()*(innerWidth-60), innerHeight - 40, ['❤️','🤍','💕'][i%3]);
+      if (++i > 26) clearInterval(iv);
+    }, 160);
+    if (typeof confetti === 'function') setTimeout(()=>confetti({particleCount:60, spread:110, origin:{y:.35}, colors:['#FF6B5E','#FFD1CC','#FFFFFF']}), 300);
+  }
+})();
+</script>
+</body>
+</html>
